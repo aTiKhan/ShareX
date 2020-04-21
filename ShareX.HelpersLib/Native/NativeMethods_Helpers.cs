@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -235,16 +235,19 @@ namespace ShareX.HelpersLib
         {
             if (Helpers.IsWindows10OrGreater(17763))
             {
-                try
+                DwmWindowAttribute attribute;
+
+                if (Helpers.IsWindows10OrGreater(18985))
                 {
-                    int useImmersiveDarkMode = enabled ? 1 : 0;
-                    int result = DwmSetWindowAttribute(handle, (int)DwmWindowAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE, ref useImmersiveDarkMode, sizeof(int));
-                    return result == 0;
+                    attribute = DwmWindowAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE;
                 }
-                catch (Exception e)
+                else
                 {
-                    DebugHelper.WriteException(e);
+                    attribute = DwmWindowAttribute.DWMWA_USE_IMMERSIVE_DARK_MODE_BEFORE_20H1;
                 }
+
+                int useImmersiveDarkMode = enabled ? 1 : 0;
+                return DwmSetWindowAttribute(handle, (int)attribute, ref useImmersiveDarkMode, sizeof(int)) == 0;
             }
 
             return false;

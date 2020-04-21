@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -715,7 +715,7 @@ namespace ShareX.HelpersLib
             rtb.SelectionFont = new Font(rtb.Font, FontStyle.Bold);
         }
 
-        public static void SupportDarkTheme(this ListView lv)
+        public static void SupportCustomTheme(this ListView lv)
         {
             if (!lv.OwnerDraw)
             {
@@ -733,7 +733,7 @@ namespace ShareX.HelpersLib
 
                 lv.DrawColumnHeader += (sender, e) =>
                 {
-                    if (ShareXResources.UseDarkTheme)
+                    if (ShareXResources.UseCustomTheme)
                     {
                         using (Brush brush = new SolidBrush(ShareXResources.Theme.BackgroundColor))
                         {
@@ -792,6 +792,36 @@ namespace ShareX.HelpersLib
             if (endIndex == -1) return new List<T>();
 
             return Range(source, startIndex, endIndex);
+        }
+
+        public static T CloneSafe<T>(this T obj) where T : class, ICloneable
+        {
+            try
+            {
+                if (obj != null)
+                {
+                    return obj.Clone() as T;
+                }
+            }
+            catch (Exception e)
+            {
+                DebugHelper.WriteException(e);
+            }
+
+            return null;
+        }
+
+        public static IEnumerable<TreeNode> All(this TreeNodeCollection nodes)
+        {
+            foreach (TreeNode node in nodes)
+            {
+                yield return node;
+
+                foreach (TreeNode child in node.Nodes.All())
+                {
+                    yield return child;
+                }
+            }
         }
     }
 }

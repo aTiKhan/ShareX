@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -67,21 +67,21 @@ namespace ShareX.ImageEffectsLib
             Gradient.Colors.Add(new GradientStop(Color.FromArgb(23, 89, 174), 100f));
         }
 
-        public override Image Apply(Image img)
+        public override Bitmap Apply(Bitmap bmp)
         {
             if (UseGradient)
             {
                 if (UseCustomGradient && Gradient != null && Gradient.IsValid)
                 {
-                    return ImageHelpers.FillBackground(img, Gradient);
+                    return ImageHelpers.FillBackground(bmp, Gradient);
                 }
                 else
                 {
-                    return ImageHelpers.FillBackground(img, Color, Color2, GradientType);
+                    return ImageHelpers.FillBackground(bmp, Color, Color2, GradientType);
                 }
             }
 
-            return ImageHelpers.FillBackground(img, Color);
+            return ImageHelpers.FillBackground(bmp, Color);
         }
     }
 }

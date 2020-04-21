@@ -11,7 +11,7 @@
 #define MyAppId "82E6AC09-0FEF-4390-AD9F-0DD3F5561EFC"
 
 [Setup]
-AppCopyright=Copyright (c) 2007-2019 {#MyAppPublisher}
+AppCopyright=Copyright (c) 2007-2020 {#MyAppPublisher}
 AppId={#MyAppId}
 AppMutex={#MyAppId}
 AppName={#MyAppName}
@@ -21,7 +21,7 @@ AppSupportURL=https://github.com/ShareX/ShareX/issues
 AppUpdatesURL=https://github.com/ShareX/ShareX/releases
 AppVerName={#MyAppName} {#MyAppVersion}
 AppVersion={#MyAppVersion}
-ArchitecturesAllowed=x86 x64 ia64
+ArchitecturesAllowed=x86 x64 ia64 arm64
 ArchitecturesInstallIn64BitMode=x64 ia64
 DefaultDirName={pf}\{#MyAppName}
 DefaultGroupName={#MyAppName}

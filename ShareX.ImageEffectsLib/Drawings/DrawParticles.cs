@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -36,8 +36,8 @@ using System.Linq;
 
 namespace ShareX.ImageEffectsLib
 {
-    [Description("Random images")]
-    public class DrawRandomImages : ImageEffect
+    [Description("Particles")]
+    public class DrawParticles : ImageEffect
     {
         [DefaultValue(""), Editor(typeof(DirectoryNameEditor), typeof(UITypeEditor))]
         public string ImageFolder { get; set; }
@@ -92,12 +92,12 @@ namespace ShareX.ImageEffectsLib
 
         private List<Rectangle> imageRectangles = new List<Rectangle>();
 
-        public DrawRandomImages()
+        public DrawParticles()
         {
             this.ApplyDefaultPropertyValues();
         }
 
-        public override Image Apply(Image img)
+        public override Bitmap Apply(Bitmap bmp)
         {
             string imageFolder = Helpers.ExpandFolderVariables(ImageFolder);
 
@@ -109,7 +109,7 @@ namespace ShareX.ImageEffectsLib
                 {
                     imageRectangles.Clear();
 
-                    using (Graphics g = Graphics.FromImage(img))
+                    using (Graphics g = Graphics.FromImage(bmp))
                     using (ImageFilesCache imageCache = new ImageFilesCache())
                     {
                         g.InterpolationMode = InterpolationMode.HighQualityBicubic;
@@ -118,18 +118,18 @@ namespace ShareX.ImageEffectsLib
                         {
                             string file = MathHelpers.RandomPick(files);
 
-                            Image img2 = imageCache.GetImage(file);
+                            Bitmap bmpCached = imageCache.GetImage(file);
 
-                            if (img2 != null)
+                            if (bmpCached != null)
                             {
-                                DrawImage(img, img2, g);
+                                DrawImage(bmp, bmpCached, g);
                             }
                         }
                     }
                 }
             }
 
-            return img;
+            return bmp;
         }
 
         private void DrawImage(Image img, Image img2, Graphics g)
@@ -138,7 +138,18 @@ namespace ShareX.ImageEffectsLib
 
             if (RandomSize)
             {
-                width = height = MathHelpers.Random(Math.Min(RandomSizeMin, RandomSizeMax), Math.Max(RandomSizeMin, RandomSizeMax));
+                int size = MathHelpers.Random(Math.Min(RandomSizeMin, RandomSizeMax), Math.Max(RandomSizeMin, RandomSizeMax));
+                width = size;
+                height = size;
+
+                if (img2.Width > img2.Height)
+                {
+                    height = (int)Math.Round(size * ((double)img2.Height / img2.Width));
+                }
+                else if (img2.Width < img2.Height)
+                {
+                    width = (int)Math.Round(size * ((double)img2.Width / img2.Height));
+                }
             }
             else
             {

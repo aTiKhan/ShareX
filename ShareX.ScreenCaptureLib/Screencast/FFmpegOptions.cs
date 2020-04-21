@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -41,7 +41,6 @@ namespace ShareX.ScreenCaptureLib
         public string UserArgs { get; set; } = "";
         public bool UseCustomCommands { get; set; } = false;
         public string CustomCommands { get; set; } = "";
-        public bool ShowError { get; set; } = true;
 
         // Video
         public FFmpegPreset x264_Preset { get; set; } = FFmpegPreset.ultrafast;

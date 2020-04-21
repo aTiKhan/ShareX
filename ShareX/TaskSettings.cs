@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -349,6 +349,7 @@ namespace ShareX
         public float ScreenRecordDuration = 3f;
         public bool ScreenRecordTwoPassEncoding = false;
         public bool ScreenRecordAskConfirmationOnAbort = false;
+        public bool ScreenRecordTransparentRegion = false;
 
         #endregion Capture / Screen recorder
 
@@ -367,7 +368,7 @@ namespace ShareX
 
     public class TaskSettingsUpload
     {
-        #region Upload
+        #region Upload / File naming
 
         public bool UseCustomTimeZone = false;
         public TimeZoneInfo CustomTimeZone = TimeZoneInfo.Utc;
@@ -377,7 +378,7 @@ namespace ShareX
         public bool FileUploadUseNamePattern = false;
         public bool FileUploadReplaceProblematicCharacters = false;
 
-        #endregion Upload
+        #endregion Upload / File naming
 
         #region Upload / Clipboard upload
 
@@ -388,7 +389,11 @@ namespace ShareX
 
         #endregion Upload / Clipboard upload
 
+        #region Upload / Uploader filters
+
         public List<UploaderFilter> UploaderFilters = new List<UploaderFilter>();
+
+        #endregion Upload / Uploader filters
     }
 
     public class TaskSettingsTools

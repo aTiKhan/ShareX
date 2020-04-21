@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -61,7 +61,16 @@ namespace ShareX.HistoryLib
 
         public HistoryItem UpdateSelectedHistoryItem()
         {
-            HistoryItem = GetSelectedHistoryItem();
+            HistoryItem[] historyItems = OnGetHistoryItems();
+
+            if (historyItems != null && historyItems.Length > 0)
+            {
+                HistoryItem = historyItems[0];
+            }
+            else
+            {
+                HistoryItem = null;
+            }
 
             if (HistoryItem != null)
             {
@@ -76,7 +85,7 @@ namespace ShareX.HistoryLib
                 IsImageFile = IsFileExist && Helpers.IsImageFile(HistoryItem.FilePath);
                 IsTextFile = IsFileExist && Helpers.IsTextFile(HistoryItem.FilePath);
 
-                UpdateButtons();
+                UpdateContextMenu(historyItems.Length);
             }
             else
             {
@@ -84,20 +93,6 @@ namespace ShareX.HistoryLib
             }
 
             return HistoryItem;
-        }
-
-        private HistoryItem GetSelectedHistoryItem()
-        {
-            HistoryItem[] historyItems = OnGetHistoryItems();
-
-            if (historyItems != null && historyItems.Length > 0)
-            {
-                UpdateTexts(historyItems.Length);
-
-                return historyItems[0];
-            }
-
-            return null;
         }
 
         public HistoryItem[] OnGetHistoryItems()
@@ -161,10 +156,9 @@ namespace ShareX.HistoryLib
 
         public void CopyURL()
         {
-            if (HistoryItem != null && IsURLExist)
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
             {
-                HistoryItem[] historyItems = OnGetHistoryItems();
-
                 string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL)).Select(x => x.URL).ToArray();
 
                 if (array != null && array.Length > 0)
@@ -181,22 +175,73 @@ namespace ShareX.HistoryLib
 
         public void CopyShortenedURL()
         {
-            if (HistoryItem != null && IsShortenedURLExist) ClipboardHelpers.CopyText(HistoryItem.ShortenedURL);
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.ShortenedURL)).Select(x => x.ShortenedURL).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string shortenedURLs = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(shortenedURLs))
+                    {
+                        ClipboardHelpers.CopyText(shortenedURLs);
+                    }
+                }
+            }
         }
 
         public void CopyThumbnailURL()
         {
-            if (HistoryItem != null && IsThumbnailURLExist) ClipboardHelpers.CopyText(HistoryItem.ThumbnailURL);
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.ThumbnailURL)).Select(x => x.ThumbnailURL).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string thumbnailURLs = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(thumbnailURLs))
+                    {
+                        ClipboardHelpers.CopyText(thumbnailURLs);
+                    }
+                }
+            }
         }
 
         public void CopyDeletionURL()
         {
-            if (HistoryItem != null && IsDeletionURLExist) ClipboardHelpers.CopyText(HistoryItem.DeletionURL);
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.DeletionURL)).Select(x => x.DeletionURL).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string deletionURLs = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(deletionURLs))
+                    {
+                        ClipboardHelpers.CopyText(deletionURLs);
+                    }
+                }
+            }
         }
 
         public void CopyFile()
         {
-            if (HistoryItem != null && IsFileExist) ClipboardHelpers.CopyFile(HistoryItem.FilePath);
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.FilePath) && Path.HasExtension(x.FilePath) && File.Exists(x.FilePath)).Select(x => x.FilePath).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    ClipboardHelpers.CopyFile(array);
+                }
+            }
         }
 
         public void CopyImage()
@@ -211,10 +256,9 @@ namespace ShareX.HistoryLib
 
         public void CopyHTMLLink()
         {
-            if (HistoryItem != null && IsURLExist)
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
             {
-                HistoryItem[] historyItems = OnGetHistoryItems();
-
                 string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL)).Select(x => string.Format("<a href=\"{0}\">{0}</a>", x.URL)).ToArray();
 
                 if (array != null && array.Length > 0)
@@ -231,68 +275,230 @@ namespace ShareX.HistoryLib
 
         public void CopyHTMLImage()
         {
-            if (HistoryItem != null && IsImageURL) ClipboardHelpers.CopyText(string.Format("<img src=\"{0}\"/>", HistoryItem.URL));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL) && Helpers.IsImageFile(x.URL)).Select(x => string.Format("<img src=\"{0}\"/>", x.URL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string htmlImages = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(htmlImages))
+                    {
+                        ClipboardHelpers.CopyText(htmlImages);
+                    }
+                }
+            }
         }
 
         public void CopyHTMLLinkedImage()
         {
-            if (HistoryItem != null && IsImageURL && IsThumbnailURLExist)
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
             {
-                ClipboardHelpers.CopyText(string.Format("<a href=\"{0}\"><img src=\"{1}\"/></a>", HistoryItem.URL, HistoryItem.ThumbnailURL));
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL) && Helpers.IsImageFile(x.URL) && !string.IsNullOrEmpty(x.ThumbnailURL)).Select(x => string.Format("<a href=\"{0}\"><img src=\"{1}\"/></a>", x.URL, x.ThumbnailURL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string htmlLinkedImages = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(htmlLinkedImages))
+                    {
+                        ClipboardHelpers.CopyText(htmlLinkedImages);
+                    }
+                }
             }
         }
 
         public void CopyForumLink()
         {
-            if (HistoryItem != null && IsURLExist) ClipboardHelpers.CopyText(string.Format("[url]{0}[/url]", HistoryItem.URL));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL)).Select(x => string.Format("[url]{0}[/url]", x.URL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string forumLinks = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(forumLinks))
+                    {
+                        ClipboardHelpers.CopyText(forumLinks);
+                    }
+                }
+            }
         }
 
         public void CopyForumImage()
         {
-            if (HistoryItem != null && IsImageURL) ClipboardHelpers.CopyText(string.Format("[img]{0}[/img]", HistoryItem.URL));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL) && Helpers.IsImageFile(x.URL)).Select(x => string.Format("[img]{0}[/img]", x.URL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string forumImages = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(forumImages))
+                    {
+                        ClipboardHelpers.CopyText(forumImages);
+                    }
+                }
+            }
         }
 
         public void CopyForumLinkedImage()
         {
-            if (HistoryItem != null && IsImageURL && IsThumbnailURLExist)
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
             {
-                ClipboardHelpers.CopyText(string.Format("[url={0}][img]{1}[/img][/url]", HistoryItem.URL, HistoryItem.ThumbnailURL));
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL) && Helpers.IsImageFile(x.URL) && !string.IsNullOrEmpty(x.ThumbnailURL)).Select(x => string.Format("[url={0}][img]{1}[/img][/url]", x.URL, x.ThumbnailURL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string forumLinkedImages = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(forumLinkedImages))
+                    {
+                        ClipboardHelpers.CopyText(forumLinkedImages);
+                    }
+                }
             }
         }
 
         public void CopyMarkdownLink()
         {
-            if (HistoryItem != null && IsURLExist) ClipboardHelpers.CopyText(string.Format("[{0}]({1})", HistoryItem.FileName, HistoryItem.URL));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL)).Select(x => string.Format("[{0}]({1})", x.FileName, x.URL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string markdownLinks = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(markdownLinks))
+                    {
+                        ClipboardHelpers.CopyText(markdownLinks);
+                    }
+                }
+            }
         }
 
         public void CopyMarkdownImage()
         {
-            if (HistoryItem != null && IsImageURL) ClipboardHelpers.CopyText(string.Format("![{0}]({1})", HistoryItem.FileName, HistoryItem.URL));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL) && Helpers.IsImageFile(x.URL)).Select(x => string.Format("![{0}]({1})", x.FileName, x.URL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string markdownImages = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(markdownImages))
+                    {
+                        ClipboardHelpers.CopyText(markdownImages);
+                    }
+                }
+            }
         }
 
         public void CopyMarkdownLinkedImage()
         {
-            if (HistoryItem != null && IsImageURL) ClipboardHelpers.CopyText(string.Format("[![{0}]({1})]({2})", HistoryItem.FileName, HistoryItem.URL, HistoryItem.URL));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.URL) && Helpers.IsImageFile(x.URL) && !string.IsNullOrEmpty(x.ThumbnailURL)).Select(x => string.Format("[![{0}]({1})]({2})", x.FileName, x.ThumbnailURL, x.URL)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string markdownLinkedImages = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(markdownLinkedImages))
+                    {
+                        ClipboardHelpers.CopyText(markdownLinkedImages);
+                    }
+                }
+            }
         }
 
         public void CopyFilePath()
         {
-            if (HistoryItem != null && IsFilePathValid) ClipboardHelpers.CopyText(HistoryItem.FilePath);
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.FilePath) && Path.HasExtension(x.FilePath) && File.Exists(x.FilePath)).Select(x => x.FilePath).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string filePaths = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(filePaths))
+                    {
+                        ClipboardHelpers.CopyText(filePaths);
+                    }
+                }
+            }
         }
 
         public void CopyFileName()
         {
-            if (HistoryItem != null && IsFilePathValid) ClipboardHelpers.CopyText(Path.GetFileNameWithoutExtension(HistoryItem.FilePath));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.FilePath) && Path.HasExtension(x.FilePath)).Select(x => Path.GetFileNameWithoutExtension(x.FilePath)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string fileNames = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(fileNames))
+                    {
+                        ClipboardHelpers.CopyText(fileNames);
+                    }
+                }
+            }
         }
 
         public void CopyFileNameWithExtension()
         {
-            if (HistoryItem != null && IsFilePathValid) ClipboardHelpers.CopyText(Path.GetFileName(HistoryItem.FilePath));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.FilePath) && Path.HasExtension(x.FilePath)).Select(x => Path.GetFileName(x.FilePath)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string fileNamesWithExtension = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(fileNamesWithExtension))
+                    {
+                        ClipboardHelpers.CopyText(fileNamesWithExtension);
+                    }
+                }
+            }
         }
 
         public void CopyFolder()
         {
-            if (HistoryItem != null && IsFilePathValid) ClipboardHelpers.CopyText(Path.GetDirectoryName(HistoryItem.FilePath));
+            HistoryItem[] historyItems = OnGetHistoryItems();
+            if (historyItems != null)
+            {
+                string[] array = historyItems.Where(x => x != null && !string.IsNullOrEmpty(x.FilePath) && Path.HasExtension(x.FilePath)).Select(x => Path.GetDirectoryName(x.FilePath)).ToArray();
+
+                if (array != null && array.Length > 0)
+                {
+                    string folderPaths = string.Join("\r\n", array);
+
+                    if (!string.IsNullOrEmpty(folderPaths))
+                    {
+                        ClipboardHelpers.CopyText(folderPaths);
+                    }
+                }
+            }
         }
 
         public void ShowImagePreview()

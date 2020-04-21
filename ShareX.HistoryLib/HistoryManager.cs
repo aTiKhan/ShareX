@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -55,8 +55,7 @@ namespace ShareX.HistoryLib
             {
                 DebugHelper.WriteException(e);
 
-                // TODO: Translate
-                MessageBox.Show(string.Format("Error occured while reading history file: {0}", FilePath) + "\r\n\r\n" + e,
+                MessageBox.Show(Resources.ErrorOccuredWhileReadingHistoryFile + " " + FilePath + "\r\n\r\n" + e,
                     "ShareX - " + Resources.HistoryManager_GetHistoryItems_Error, MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
 

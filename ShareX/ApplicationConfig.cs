@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -72,8 +72,6 @@ namespace ShareX
         public bool SilentRun = false;
         public bool TrayIconProgressEnabled = true;
         public bool TaskbarProgressEnabled = true;
-        public bool UseDarkTheme = true;
-        public bool ExperimentalDarkTheme = false;
         public bool UseWhiteShareXIcon = false;
         public bool RememberMainFormPosition = false;
         public Point MainFormPosition = Point.Empty;
@@ -90,7 +88,12 @@ namespace ShareX
 
         #region Theme
 
-        public List<ShareXTheme> Themes = new List<ShareXTheme>();
+        // TEMP: For backward compatibility
+        public bool UseDarkTheme = true;
+
+        public bool UseCustomTheme = true;
+        public bool ExperimentalCustomTheme = true;
+        public List<ShareXTheme> Themes = ShareXTheme.GetPresets();
         public int SelectedTheme = 0;
 
         #endregion

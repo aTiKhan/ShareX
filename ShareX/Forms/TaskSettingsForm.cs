@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -49,6 +49,8 @@ namespace ShareX
         {
             InitializeComponent();
             ShareXResources.ApplyTheme(this);
+
+            tsmiURLShorteners.Image = ShareXResources.IsDarkTheme ? Resources.edit_scale_white : Resources.edit_scale;
 
             TaskSettings = hotkeySetting;
             IsDefault = isDefault;
@@ -290,10 +292,11 @@ namespace ShareX
             cbScreenRecorderFixedDuration.Checked = nudScreenRecorderDuration.Enabled = TaskSettings.CaptureSettings.ScreenRecordFixedDuration;
             nudScreenRecorderDuration.SetValue((decimal)TaskSettings.CaptureSettings.ScreenRecordDuration);
             chkScreenRecordAutoStart.Checked = nudScreenRecorderStartDelay.Enabled = TaskSettings.CaptureSettings.ScreenRecordAutoStart;
-            cbScreenRecordConfirmAbort.Checked = TaskSettings.CaptureSettings.ScreenRecordAskConfirmationOnAbort;
             nudScreenRecorderStartDelay.SetValue((decimal)TaskSettings.CaptureSettings.ScreenRecordStartDelay);
             cbScreenRecorderShowCursor.Checked = TaskSettings.CaptureSettings.ScreenRecordShowCursor;
             cbScreenRecordTwoPassEncoding.Checked = TaskSettings.CaptureSettings.ScreenRecordTwoPassEncoding;
+            cbScreenRecordTransparentRegion.Checked = TaskSettings.CaptureSettings.ScreenRecordTransparentRegion;
+            cbScreenRecordConfirmAbort.Checked = TaskSettings.CaptureSettings.ScreenRecordAskConfirmationOnAbort;
 
             #endregion Screen recorder
 
@@ -415,7 +418,7 @@ namespace ShareX
         {
             if (IsDefault && tabPage == tpUploadMain)
             {
-                tttvMain.SelectChild();
+                tttvMain.SelectChildNode();
             }
         }
 
@@ -436,10 +439,10 @@ namespace ShareX
             if (!IsDefault)
             {
                 pGeneral.Enabled = !TaskSettings.UseDefaultGeneralSettings;
-                pImage.Enabled = ((Control)tpEffects).Enabled = ((Control)tpThumbnail).Enabled = !TaskSettings.UseDefaultImageSettings;
-                pCapture.Enabled = ((Control)tpRegionCapture).Enabled = ((Control)tpScreenRecorder).Enabled = !TaskSettings.UseDefaultCaptureSettings;
+                pImage.Enabled = tpEffects.Enabled = tpThumbnail.Enabled = !TaskSettings.UseDefaultImageSettings;
+                pCapture.Enabled = tpRegionCapture.Enabled = tpScreenRecorder.Enabled = tpOCR.Enabled = !TaskSettings.UseDefaultCaptureSettings;
                 pActions.Enabled = !TaskSettings.UseDefaultActions;
-                ((Control)tpFileNaming).Enabled = ((Control)tpUploadClipboard).Enabled = !TaskSettings.UseDefaultUploadSettings;
+                tpFileNaming.Enabled = tpUploadClipboard.Enabled = tpUploaderFilters.Enabled = !TaskSettings.UseDefaultUploadSettings;
                 pTools.Enabled = !TaskSettings.UseDefaultToolsSettings;
                 pgTaskSettings.Enabled = !TaskSettings.UseDefaultAdvancedSettings;
             }
@@ -461,7 +464,7 @@ namespace ShareX
             }
         }
 
-        private void AddEnumItemsContextMenu<T>(Action<T> selectedEnum, params ToolStripDropDown[] parents)
+        private void AddEnumItemsContextMenu<T>(Action<T> selectedEnum, params ToolStripDropDown[] parents) where T : Enum
         {
             EnumInfo[] enums = Helpers.GetEnums<T>().OfType<Enum>().Select(x => new EnumInfo(x)).ToArray();
 
@@ -470,13 +473,14 @@ namespace ShareX
                 foreach (EnumInfo enumInfo in enums)
                 {
                     ToolStripMenuItem tsmi = new ToolStripMenuItem(enumInfo.Description.Replace("&", "&&"));
+                    tsmi.Image = TaskHelpers.FindMenuIcon(enumInfo.Value);
                     tsmi.Tag = enumInfo;
 
                     tsmi.Click += (sender, e) =>
                     {
                         SetEnumCheckedContextMenu(enumInfo, parents);
 
-                        selectedEnum((T)Enum.ToObject(typeof(T), enumInfo.Value));
+                        selectedEnum((T)enumInfo.Value);
 
                         UpdateUploaderMenuNames();
                     };
@@ -531,7 +535,7 @@ namespace ShareX
             }
         }
 
-        private void AddMultiEnumItemsContextMenu<T>(Action<T> selectedEnum, params ToolStripDropDown[] parents)
+        private void AddMultiEnumItemsContextMenu<T>(Action<T> selectedEnum, params ToolStripDropDown[] parents) where T : Enum
         {
             string[] enums = Helpers.GetLocalizedEnumDescriptions<T>().Skip(1).Select(x => x.Replace("&", "&&")).ToArray();
 
@@ -1103,6 +1107,11 @@ namespace ShareX
         private void cbScreenRecordTwoPassEncoding_CheckedChanged(object sender, EventArgs e)
         {
             TaskSettings.CaptureSettings.ScreenRecordTwoPassEncoding = cbScreenRecordTwoPassEncoding.Checked;
+        }
+
+        private void cbScreenRecordTransparentRegion_CheckedChanged(object sender, EventArgs e)
+        {
+            TaskSettings.CaptureSettings.ScreenRecordTransparentRegion = cbScreenRecordTransparentRegion.Checked;
         }
 
         private void cbScreenRecordConfirmAbort_CheckedChanged(object sender, EventArgs e)

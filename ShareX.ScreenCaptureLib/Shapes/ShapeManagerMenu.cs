@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -243,16 +243,16 @@ namespace ShareX.ScreenCaptureLib
                         img = Resources.pencil;
                         break;
                     case ShapeType.DrawingLine:
-                        img = Resources.layer_shape_line;
+                        img = ShareXResources.IsDarkTheme ? Resources.layer_shape_line_white : Resources.layer_shape_line;
                         break;
                     case ShapeType.DrawingArrow:
-                        img = Resources.layer_shape_arrow;
+                        img = ShareXResources.IsDarkTheme ? Resources.layer_shape_arrow_white : Resources.layer_shape_arrow;
                         break;
                     case ShapeType.DrawingTextOutline:
-                        img = Resources.edit_outline;
+                        img = ShareXResources.IsDarkTheme ? Resources.edit_outline_white : Resources.edit_outline;
                         break;
                     case ShapeType.DrawingTextBackground:
-                        img = Resources.edit_shade;
+                        img = ShareXResources.IsDarkTheme ? Resources.edit_shade_white : Resources.edit_shade;
                         break;
                     case ShapeType.DrawingSpeechBalloon:
                         img = Resources.balloon_box_left;
@@ -282,11 +282,14 @@ namespace ShareX.ScreenCaptureLib
                     case ShapeType.DrawingCursor:
                         img = Resources.stamp_cursor;
                         break;
+                    case ShapeType.DrawingSmartEraser:
+                        img = Resources.eraser;
+                        break;
                     case ShapeType.EffectBlur:
-                        img = Resources.layer_shade;
+                        img = ShareXResources.IsDarkTheme ? Resources.layer_shade_white : Resources.layer_shade;
                         break;
                     case ShapeType.EffectPixelate:
-                        img = Resources.grid;
+                        img = ShareXResources.IsDarkTheme ? Resources.grid_white : Resources.grid;
                         break;
                     case ShapeType.EffectHighlight:
                         img = Resources.highlighter_text;
@@ -324,7 +327,7 @@ namespace ShareX.ScreenCaptureLib
             {
                 Form.Pause();
 
-                ShapeType shapeType = CurrentTool;
+                ShapeType shapeType = CurrentShapeTool;
 
                 Color borderColor;
 
@@ -378,7 +381,7 @@ namespace ShareX.ScreenCaptureLib
             {
                 Form.Pause();
 
-                ShapeType shapeType = CurrentTool;
+                ShapeType shapeType = CurrentShapeTool;
 
                 Color fillColor;
 
@@ -457,7 +460,7 @@ namespace ShareX.ScreenCaptureLib
             tslnudBorderSize.Content.Maximum = 20;
             tslnudBorderSize.Content.ValueChanged = (sender, e) =>
             {
-                ShapeType shapeType = CurrentTool;
+                ShapeType shapeType = CurrentShapeTool;
 
                 int borderSize = (int)tslnudBorderSize.Content.Value;
 
@@ -487,7 +490,7 @@ namespace ShareX.ScreenCaptureLib
             tslnudCornerRadius.Content.Maximum = 150;
             tslnudCornerRadius.Content.ValueChanged = (sender, e) =>
             {
-                ShapeType shapeType = CurrentTool;
+                ShapeType shapeType = CurrentShapeTool;
 
                 if (shapeType == ShapeType.RegionRectangle)
                 {
@@ -1263,10 +1266,7 @@ namespace ShareX.ScreenCaptureLib
             }
 
             // use menu of current shape in case of an active select tool.
-            if (CurrentShape != null && shapeType == ShapeType.ToolSelect)
-            {
-                shapeType = CurrentShape.ShapeType;
-            }
+            shapeType = CurrentShapeTool;
 
             Color borderColor;
 

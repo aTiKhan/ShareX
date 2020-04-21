@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -35,10 +35,10 @@ namespace ShareX.ImageEffectsLib
 {
     public partial class ImageEffectsForm : Form
     {
-        public event Action<Image> ImageProcessRequested;
+        public event Action<Bitmap> ImageProcessRequested;
 
         public bool AutoGeneratePreviewImage { get; set; }
-        public Image PreviewImage { get; private set; }
+        public Bitmap PreviewImage { get; private set; }
         public List<ImageEffectPreset> Presets { get; private set; }
         public int SelectedPresetIndex { get; private set; }
         public string FilePath { get; private set; }
@@ -46,12 +46,12 @@ namespace ShareX.ImageEffectsLib
         private bool ignorePresetsSelectedIndexChanged = false;
         private bool pauseUpdate = false;
 
-        public ImageEffectsForm(Image img, List<ImageEffectPreset> presets, int selectedPresetIndex)
+        public ImageEffectsForm(Bitmap bmp, List<ImageEffectPreset> presets, int selectedPresetIndex)
         {
             InitializeComponent();
             ShareXResources.ApplyTheme(this);
 
-            PreviewImage = img;
+            PreviewImage = bmp;
             if (PreviewImage == null)
             {
                 AutoGeneratePreviewImage = true;
@@ -68,7 +68,7 @@ namespace ShareX.ImageEffectsLib
             AddAllEffectsToContextMenu();
         }
 
-        public void EnableToolMode(Action<Image> imageProcessRequested, string filePath = null)
+        public void EnableToolMode(Action<Bitmap> imageProcessRequested, string filePath = null)
         {
             FilePath = filePath;
             ImageProcessRequested += imageProcessRequested;
@@ -84,11 +84,11 @@ namespace ShareX.ImageEffectsLib
             btnClose.Text = Resources.ImageEffectsForm_EditorMode_Cancel;
         }
 
-        protected void OnImageProcessRequested(Image img)
+        protected void OnImageProcessRequested(Bitmap bmp)
         {
             if (ImageProcessRequested != null)
             {
-                ImageProcessRequested(img);
+                ImageProcessRequested(bmp);
             }
         }
 
@@ -100,7 +100,7 @@ namespace ShareX.ImageEffectsLib
                 typeof(DrawCheckerboard),
                 typeof(DrawImage),
                 typeof(DrawText),
-                typeof(DrawRandomImages));
+                typeof(DrawParticles));
 
             AddEffectToContextMenu(Resources.ImageEffectsForm_AddAllEffectsToTreeView_Manipulations,
                 typeof(AutoCrop),
@@ -286,7 +286,7 @@ namespace ShareX.ImageEffectsLib
 
                 Color backgroundColor;
 
-                if (ShareXResources.UseDarkTheme)
+                if (ShareXResources.UseCustomTheme)
                 {
                     backgroundColor = ShareXResources.Theme.BackgroundColor;
                 }
@@ -301,7 +301,7 @@ namespace ShareX.ImageEffectsLib
 
                     if (PreviewImage.Width > 260 && PreviewImage.Height > 260)
                     {
-                        using (Image logo = ShareXResources.Logo)
+                        using (Bitmap logo = ShareXResources.Logo)
                         {
                             g.DrawImage(logo, (PreviewImage.Width / 2) - (logo.Width / 2), (PreviewImage.Height / 2) - (logo.Height / 2));
                         }
@@ -310,7 +310,7 @@ namespace ShareX.ImageEffectsLib
             }
         }
 
-        private Image ApplyEffects()
+        private Bitmap ApplyEffects()
         {
             ImageEffectPreset preset = GetSelectedPreset();
 
@@ -516,6 +516,7 @@ namespace ShareX.ImageEffectsLib
             {
                 lvEffects.Items.Clear();
                 preset.Effects.Clear();
+                pgSettings.SelectedObject = null;
                 UpdatePreview();
             }
         }
@@ -613,12 +614,12 @@ namespace ShareX.ImageEffectsLib
 
         private void tsmiLoadImageFromClipboard_Click(object sender, EventArgs e)
         {
-            Image img = ClipboardHelpers.GetImage();
+            Bitmap bmp = ClipboardHelpers.GetImage();
 
-            if (img != null)
+            if (bmp != null)
             {
                 if (PreviewImage != null) PreviewImage.Dispose();
-                PreviewImage = img;
+                PreviewImage = bmp;
                 FilePath = null;
                 UpdatePreview();
             }
@@ -647,11 +648,11 @@ namespace ShareX.ImageEffectsLib
         {
             if (PreviewImage != null)
             {
-                Image img = ApplyEffects();
+                Bitmap bmp = ApplyEffects();
 
-                if (img != null)
+                if (bmp != null)
                 {
-                    OnImageProcessRequested(img);
+                    OnImageProcessRequested(bmp);
                 }
             }
         }
@@ -686,12 +687,12 @@ namespace ShareX.ImageEffectsLib
             }
             else if (e.Data.GetDataPresent(DataFormats.Bitmap, false))
             {
-                Image img = e.Data.GetData(DataFormats.Bitmap, false) as Image;
+                Bitmap bmp = e.Data.GetData(DataFormats.Bitmap, false) as Bitmap;
 
-                if (img != null)
+                if (bmp != null)
                 {
                     if (PreviewImage != null) PreviewImage.Dispose();
-                    PreviewImage = img;
+                    PreviewImage = bmp;
                     UpdatePreview();
                 }
             }

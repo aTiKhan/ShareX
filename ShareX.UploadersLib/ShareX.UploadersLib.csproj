@@ -237,6 +237,7 @@
     <Compile Include="OAuth\OAuth2ProofKey.cs" />
     <Compile Include="Helpers\SSLBypassHelper.cs" />
     <Compile Include="BaseServices\URLSharingService.cs" />
+    <Compile Include="OAuth\OAuthUserInfo.cs" />
     <Compile Include="OtherServices\OCRSpace.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -475,6 +476,9 @@
     <EmbeddedResource Include="Forms\CustomUploaderSettingsForm.ru.resx">
       <DependentUpon>CustomUploaderSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\CustomUploaderSettingsForm.uk.resx">
+      <DependentUpon>CustomUploaderSettingsForm.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\CustomUploaderSettingsForm.vi-VN.resx">
       <DependentUpon>CustomUploaderSettingsForm.cs</DependentUpon>
     </EmbeddedResource>
@@ -644,6 +648,9 @@
       <DependentUpon>PuushLoginForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PuushLoginForm.tr.resx">
+      <DependentUpon>PuushLoginForm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\PuushLoginForm.uk.resx">
       <DependentUpon>PuushLoginForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\PuushLoginForm.vi-VN.resx">
@@ -972,10 +979,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="FluentFTP">
-      <Version>28.0.1</Version>
+      <Version>32.3.2</Version>
     </PackageReference>
     <PackageReference Include="MegaApiClient">
-      <Version>1.7.1</Version>
+      <Version>1.8.0</Version>
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json">
       <Version>12.0.3</Version>
@@ -992,6 +999,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Favicons\Lithiio.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\navigation-270-button-white.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

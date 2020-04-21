@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -72,11 +72,19 @@ namespace ShareX.HelpersLib
         [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), TypeConverter(typeof(MyColorConverter))]
         public Color MenuCheckBackgroundColor { get; set; }
 
+        public int ContextMenuOpacity { get; set; } = 100;
+
+        [Browsable(false)]
+        public double ContextMenuOpacityDouble => ContextMenuOpacity.Clamp(10, 100) / 100d;
+
         [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), TypeConverter(typeof(MyColorConverter))]
         public Color SeparatorLightColor { get; set; }
 
         [Editor(typeof(MyColorEditor), typeof(UITypeEditor)), TypeConverter(typeof(MyColorConverter))]
         public Color SeparatorDarkColor { get; set; }
+
+        [Browsable(false)]
+        public bool IsDarkTheme => ColorHelpers.IsDarkColor(BackgroundColor);
 
         public ShareXTheme()
         {
@@ -100,6 +108,7 @@ namespace ShareX.HelpersLib
                 MenuHighlightBorderColor = Color.FromArgb(116, 129, 152),
                 MenuBorderColor = Color.FromArgb(22, 26, 31),
                 MenuCheckBackgroundColor = Color.FromArgb(56, 64, 75),
+                ContextMenuOpacity = 90,
                 SeparatorLightColor = Color.FromArgb(56, 64, 75),
                 SeparatorDarkColor = Color.FromArgb(22, 26, 31)
             };
@@ -123,6 +132,7 @@ namespace ShareX.HelpersLib
                 MenuHighlightBorderColor = Color.FromArgb(96, 143, 226),
                 MenuBorderColor = Color.FromArgb(201, 201, 201),
                 MenuCheckBackgroundColor = Color.FromArgb(225, 233, 244),
+                ContextMenuOpacity = 95,
                 SeparatorLightColor = Color.FromArgb(253, 253, 253),
                 SeparatorDarkColor = Color.FromArgb(189, 189, 189)
             };

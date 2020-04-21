@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -115,18 +115,18 @@ namespace ShareX
                 output = string.Join(Environment.NewLine + Environment.NewLine, results);
             }
 
-            txtDecodeResult.Text = output;
+            rtbDecodeResult.Text = output;
         }
 
         private void DecodeFromFile(string filePath)
         {
             if (!string.IsNullOrEmpty(filePath))
             {
-                using (Image img = ImageHelpers.LoadImage(filePath))
+                using (Bitmap bmp = ImageHelpers.LoadImage(filePath))
                 {
-                    if (img != null)
+                    if (bmp != null)
                     {
-                        DecodeImage((Bitmap)img);
+                        DecodeImage(bmp);
                     }
                 }
             }
@@ -194,8 +194,8 @@ namespace ShareX
         {
             if (pbQRCode.Image != null)
             {
-                Image img = (Image)pbQRCode.Image.Clone();
-                UploadManager.UploadImage(img);
+                Bitmap bmp = (Bitmap)pbQRCode.Image.Clone();
+                UploadManager.UploadImage(bmp);
             }
         }
 
@@ -218,11 +218,11 @@ namespace ShareX
 
                 TaskSettings taskSettings = TaskSettings.GetDefaultTaskSettings();
 
-                using (Image img = RegionCaptureTasks.GetRegionImage(taskSettings.CaptureSettings.SurfaceOptions))
+                using (Bitmap bmp = RegionCaptureTasks.GetRegionImage(taskSettings.CaptureSettings.SurfaceOptions))
                 {
-                    if (img != null)
+                    if (bmp != null)
                     {
-                        DecodeImage((Bitmap)img);
+                        DecodeImage(bmp);
                     }
                 }
             }
@@ -237,6 +237,11 @@ namespace ShareX
             string filePath = ImageHelpers.OpenImageFileDialog();
 
             DecodeFromFile(filePath);
+        }
+
+        private void rtbDecodeResult_LinkClicked(object sender, LinkClickedEventArgs e)
+        {
+            URLHelpers.OpenURL(e.LinkText);
         }
     }
 }

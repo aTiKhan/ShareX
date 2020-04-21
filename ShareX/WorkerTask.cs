@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -42,7 +42,7 @@ namespace ShareX
     public class WorkerTask : IDisposable
     {
         public delegate void TaskEventHandler(WorkerTask task);
-        public delegate void TaskImageEventHandler(WorkerTask task, Image image);
+        public delegate void TaskImageEventHandler(WorkerTask task, Bitmap image);
         public delegate void UploaderServiceEventHandler(IUploaderService uploaderService);
 
         public event TaskEventHandler StatusChanged, UploadStarted, UploadProgressChanged, UploadCompleted, TaskCompleted;
@@ -57,7 +57,7 @@ namespace ShareX
         public bool RequestSettingUpdate { get; private set; }
         public bool EarlyURLCopied { get; private set; }
         public Stream Data { get; private set; }
-        public Image Image { get; private set; }
+        public Bitmap Image { get; private set; }
         public bool KeepImage { get; set; }
         public string Text { get; private set; }
 
@@ -295,7 +295,7 @@ namespace ShareX
 
                 if (!StopRequested)
                 {
-                    if (Info.IsUploadJob && !Program.Settings.DisableUpload)
+                    if (Info.IsUploadJob && TaskHelpers.IsUploadAllowed())
                     {
                         DoUploadJob();
                     }
@@ -1071,11 +1071,11 @@ namespace ShareX
         {
             if (ImageReady != null)
             {
-                Image image = null;
+                Bitmap image = null;
 
                 if (Program.Settings.TaskViewMode == TaskViewMode.ThumbnailView && Image != null)
                 {
-                    image = (Image)Image.Clone();
+                    image = (Bitmap)Image.Clone();
                 }
 
                 threadWorker.InvokeAsync(() =>

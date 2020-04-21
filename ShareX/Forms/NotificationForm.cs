@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -75,7 +75,7 @@ namespace ShareX
             if (config.Image != null)
             {
                 config.Image = ImageHelpers.ResizeImageLimit(config.Image, size);
-                Color backgroundColor = ShareXResources.UseDarkTheme ? ShareXResources.Theme.BackgroundColor : SystemColors.Window;
+                Color backgroundColor = ShareXResources.UseCustomTheme ? ShareXResources.Theme.BackgroundColor : SystemColors.Window;
                 config.Image = ImageHelpers.FillBackground(config.Image, backgroundColor);
                 size = new Size(config.Image.Width + 2, config.Image.Height + 2);
             }
@@ -177,7 +177,7 @@ namespace ShareX
                 TextRenderer.DrawText(g, ToastConfig.Text, textFont, textRect.LocationOffset(1), Color.White, TextFormatFlags.Left | TextFormatFlags.EndEllipsis);
             }
 
-            Color borderColor = ShareXResources.UseDarkTheme ? ShareXResources.Theme.BorderColor : SystemColors.ControlText;
+            Color borderColor = ShareXResources.UseCustomTheme ? ShareXResources.Theme.BorderColor : SystemColors.ControlText;
             using (Pen borderPen = new Pen(borderColor))
             {
                 g.DrawRectangleProper(borderPen, rect);
@@ -347,7 +347,7 @@ namespace ShareX
 
     public class NotificationFormConfig : IDisposable
     {
-        public Image Image { get; set; }
+        public Bitmap Image { get; set; }
         public string Text { get; set; }
         public string FilePath { get; set; }
         public string URL { get; set; }

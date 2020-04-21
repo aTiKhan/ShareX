@@ -65,6 +65,7 @@
             // 
             this.ilvImages.AllowDrag = true;
             this.ilvImages.AllowDuplicateFileNames = true;
+            this.ilvImages.AllowItemReorder = false;
             this.ilvImages.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.ilvImages.CacheLimit = "100MB";
             ımageListViewColumnHeader1.Comparer = null;

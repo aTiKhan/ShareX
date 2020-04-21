@@ -643,6 +643,16 @@ namespace ShareX.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap barcode_2d_white {
+            get {
+                object obj = ResourceManager.GetObject("barcode_2d_white", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to Custom.
         /// </summary>
         public static string BeforeUploadControl_AddDestination_Custom {
@@ -1140,9 +1150,29 @@ namespace ShareX.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap edit_drop_cap_white {
+            get {
+                object obj = ResourceManager.GetObject("edit_drop_cap_white", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap edit_scale {
             get {
                 object obj = ResourceManager.GetObject("edit_scale", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap edit_scale_white {
+            get {
+                object obj = ResourceManager.GetObject("edit_scale_white", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1675,26 +1705,6 @@ namespace ShareX.Properties {
         public static System.Drawing.Bitmap layer_shape {
             get {
                 object obj = ResourceManager.GetObject("layer_shape", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap layer_shape_curve {
-            get {
-                object obj = ResourceManager.GetObject("layer_shape_curve", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap layer_shape_polygon {
-            get {
-                object obj = ResourceManager.GetObject("layer_shape_polygon", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -2491,6 +2501,15 @@ namespace ShareX.Properties {
         public static string TaskSettingsForm_UpdateWindowTitle_Task_settings_for__0_ {
             get {
                 return ResourceManager.GetString("TaskSettingsForm_UpdateWindowTitle_Task_settings_for__0_", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to This feature will not work when &quot;DisableUpload&quot; option is enabled!.
+        /// </summary>
+        public static string ThisFeatureWillNotWorkWhenDisableUploadOptionIsEnabled {
+            get {
+                return ResourceManager.GetString("ThisFeatureWillNotWorkWhenDisableUploadOptionIsEnabled", resourceCulture);
             }
         }
         

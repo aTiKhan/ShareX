@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -57,16 +57,16 @@ namespace ShareX.ImageEffectsLib
             this.ApplyDefaultPropertyValues();
         }
 
-        public override Image Apply(Image img)
+        public override Bitmap Apply(Bitmap bmp)
         {
             if (!string.IsNullOrEmpty(ImageLocation) && File.Exists(ImageLocation))
             {
-                using (Image img2 = ImageHelpers.LoadImage(ImageLocation))
+                using (Bitmap bmp2 = ImageHelpers.LoadImage(ImageLocation))
                 {
-                    if (img2 != null)
+                    if (bmp2 != null)
                     {
                         // Calculate size first
-                        Size imageSize = img2.Size;
+                        Size imageSize = bmp2.Size;
                         if (SizeMode == DrawImageSizeMode.AbsoluteSize)
                         {
                             // Use Size property
@@ -75,42 +75,34 @@ namespace ShareX.ImageEffectsLib
                         else if (SizeMode == DrawImageSizeMode.PercentageOfWatermark)
                         {
                             // Relative size (percentage of watermark)
-                            imageSize = new Size((int)(img2.Width * (Size.Width / 100.0)), (int)(img2.Height * (Size.Height / 100.0)));
+                            imageSize = new Size((int)(bmp2.Width * (Size.Width / 100.0)), (int)(bmp2.Height * (Size.Height / 100.0)));
                         }
                         else if (SizeMode == DrawImageSizeMode.PercentageOfCanvas)
                         {
                             // Relative size (percentage of image)
-                            imageSize = new Size((int)(img.Width * (Size.Width / 100.0)), (int)(img.Height * (Size.Height / 100.0)));
+                            imageSize = new Size((int)(bmp.Width * (Size.Width / 100.0)), (int)(bmp.Height * (Size.Height / 100.0)));
                         }
 
                         // Place the image
-                        Point imagePosition = Helpers.GetPosition(Placement, Offset, img.Size, imageSize);
+                        Point imagePosition = Helpers.GetPosition(Placement, Offset, bmp.Size, imageSize);
 
                         Rectangle imageRectangle = new Rectangle(imagePosition, imageSize);
 
-                        if (AutoHide && !new Rectangle(0, 0, img.Width, img.Height).Contains(imageRectangle))
+                        if (AutoHide && !new Rectangle(0, 0, bmp.Width, bmp.Height).Contains(imageRectangle))
                         {
-                            return img;
+                            return bmp;
                         }
 
-                        using (Graphics g = Graphics.FromImage(img))
+                        using (Graphics g = Graphics.FromImage(bmp))
                         {
                             g.SetHighQuality();
-                            g.DrawImage(img2, imageRectangle);
+                            g.DrawImage(bmp2, imageRectangle);
                         }
                     }
                 }
             }
 
-            return img;
-        }
-
-        public enum DrawImageSizeMode
-        {
-            DontResize,
-            AbsoluteSize,
-            PercentageOfWatermark,
-            PercentageOfCanvas
+            return bmp;
         }
     }
 }

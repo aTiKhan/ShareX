@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2019 ShareX Team
+    Copyright (c) 2007-2020 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -103,9 +103,9 @@ namespace ShareX
             cbTrayIconProgressEnabled.Checked = Program.Settings.TrayIconProgressEnabled;
             cbTaskbarProgressEnabled.Enabled = TaskbarManager.IsPlatformSupported;
             cbTaskbarProgressEnabled.Checked = Program.Settings.TaskbarProgressEnabled;
-            cbUseDarkTheme.Checked = Program.Settings.UseDarkTheme;
-            cbExperimentalDarkTheme.Enabled = Program.Settings.UseDarkTheme;
-            cbExperimentalDarkTheme.Checked = Program.Settings.ExperimentalDarkTheme;
+            cbUseCustomTheme.Checked = Program.Settings.UseCustomTheme;
+            cbExperimentalCustomTheme.Enabled = Program.Settings.UseCustomTheme;
+            cbExperimentalCustomTheme.Checked = Program.Settings.ExperimentalCustomTheme;
             cbUseWhiteShareXIcon.Checked = Program.Settings.UseWhiteShareXIcon;
             cbRememberMainFormPosition.Checked = Program.Settings.RememberMainFormPosition;
             cbRememberMainFormSize.Checked = Program.Settings.RememberMainFormSize;
@@ -434,8 +434,8 @@ namespace ShareX
 
         private void UpdateThemeControls()
         {
-            cbExperimentalDarkTheme.Enabled = btnThemeAdd.Enabled = btnThemeReset.Enabled = pgTheme.Enabled = eiTheme.Enabled = Program.Settings.UseDarkTheme;
-            cbThemes.Enabled = btnThemeRemove.Enabled = btnApplyTheme.Enabled = Program.Settings.UseDarkTheme && cbThemes.Items.Count > 0;
+            cbExperimentalCustomTheme.Enabled = btnThemeAdd.Enabled = btnThemeReset.Enabled = pgTheme.Enabled = eiTheme.Enabled = Program.Settings.UseCustomTheme;
+            cbThemes.Enabled = btnThemeRemove.Enabled = btnApplyTheme.Enabled = Program.Settings.UseCustomTheme && cbThemes.Items.Count > 0;
         }
 
         private void ApplySelectedTheme()
@@ -457,16 +457,16 @@ namespace ShareX
             }
         }
 
-        private void CbUseDarkTheme_CheckedChanged(object sender, EventArgs e)
+        private void CbUseCustomTheme_CheckedChanged(object sender, EventArgs e)
         {
-            Program.Settings.UseDarkTheme = cbUseDarkTheme.Checked;
+            Program.Settings.UseCustomTheme = cbUseCustomTheme.Checked;
             UpdateThemeControls();
             ApplySelectedTheme();
         }
 
-        private void CbExperimentalDarkTheme_CheckedChanged(object sender, EventArgs e)
+        private void cbExperimentalCustomTheme_CheckedChanged(object sender, EventArgs e)
         {
-            Program.Settings.ExperimentalDarkTheme = cbExperimentalDarkTheme.Checked;
+            Program.Settings.ExperimentalCustomTheme = cbExperimentalCustomTheme.Checked;
             UpdateThemeControls();
             ApplySelectedTheme();
         }
