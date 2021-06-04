@@ -311,17 +311,22 @@ namespace ShareX
                                 lvi.ImageIndex = 1;
                             }
 
-                            if (!info.TaskSettings.AdvancedSettings.DisableNotifications)
+                            if (!info.TaskSettings.GeneralSettings.DisableNotifications)
                             {
                                 if (info.TaskSettings.GeneralSettings.PlaySoundAfterUpload)
                                 {
                                     TaskHelpers.PlayErrorSound(info.TaskSettings);
                                 }
 
-                                if (info.TaskSettings.GeneralSettings.PopUpNotification != PopUpNotificationType.None && !string.IsNullOrEmpty(errors) &&
-                                    (!info.TaskSettings.AdvancedSettings.DisableNotificationsOnFullscreen || !CaptureHelpers.IsActiveWindowFullscreen()))
+                                if (info.Result.Errors.Count > 0)
                                 {
-                                    TaskHelpers.ShowBalloonTip(errors, ToolTipIcon.Error, 5000, "ShareX - " + Resources.TaskManager_task_UploadCompleted_Error);
+                                    string errorMessage = info.Result.Errors[0];
+
+                                    if (info.TaskSettings.GeneralSettings.ShowToastNotificationAfterTaskCompleted && !string.IsNullOrEmpty(errorMessage) &&
+                                        (!info.TaskSettings.GeneralSettings.DisableNotificationsOnFullscreen || !CaptureHelpers.IsActiveWindowFullscreen()))
+                                    {
+                                        TaskHelpers.ShowNotificationTip(errorMessage, "ShareX - " + Resources.TaskManager_task_UploadCompleted_Error, 5000);
+                                    }
                                 }
                             }
                         }
@@ -354,7 +359,7 @@ namespace ShareX
 
                                 RecentManager.Add(task);
 
-                                if (!info.TaskSettings.AdvancedSettings.DisableNotifications && info.Job != TaskJob.ShareURL)
+                                if (!info.TaskSettings.GeneralSettings.DisableNotifications && info.Job != TaskJob.ShareURL)
                                 {
                                     if (info.TaskSettings.GeneralSettings.PlaySoundAfterUpload)
                                     {
@@ -366,40 +371,28 @@ namespace ShareX
                                         result = new UploadInfoParser().Parse(info, info.TaskSettings.AdvancedSettings.BalloonTipContentFormat);
                                     }
 
-                                    if (!string.IsNullOrEmpty(result) &&
-                                        (!info.TaskSettings.AdvancedSettings.DisableNotificationsOnFullscreen || !CaptureHelpers.IsActiveWindowFullscreen()))
+                                    if (info.TaskSettings.GeneralSettings.ShowToastNotificationAfterTaskCompleted && !string.IsNullOrEmpty(result) &&
+                                        (!info.TaskSettings.GeneralSettings.DisableNotificationsOnFullscreen || !CaptureHelpers.IsActiveWindowFullscreen()))
                                     {
-                                        switch (info.TaskSettings.GeneralSettings.PopUpNotification)
+                                        task.KeepImage = true;
+
+                                        NotificationFormConfig toastConfig = new NotificationFormConfig()
                                         {
-                                            case PopUpNotificationType.BalloonTip:
-                                                BalloonTipAction action = new BalloonTipAction()
-                                                {
-                                                    ClickAction = BalloonTipClickAction.OpenURL,
-                                                    Text = result
-                                                };
+                                            Duration = (int)(info.TaskSettings.GeneralSettings.ToastWindowDuration * 1000),
+                                            FadeDuration = (int)(info.TaskSettings.GeneralSettings.ToastWindowFadeDuration * 1000),
+                                            Placement = info.TaskSettings.GeneralSettings.ToastWindowPlacement,
+                                            Size = info.TaskSettings.GeneralSettings.ToastWindowSize,
+                                            LeftClickAction = info.TaskSettings.GeneralSettings.ToastWindowLeftClickAction,
+                                            RightClickAction = info.TaskSettings.GeneralSettings.ToastWindowRightClickAction,
+                                            MiddleClickAction = info.TaskSettings.GeneralSettings.ToastWindowMiddleClickAction,
+                                            FilePath = info.FilePath,
+                                            Image = task.Image,
+                                            Title = "ShareX - " + Resources.TaskManager_task_UploadCompleted_ShareX___Task_completed,
+                                            Text = result,
+                                            URL = result
+                                        };
 
-                                                TaskHelpers.ShowBalloonTip(result, ToolTipIcon.Info, 5000,
-                                                    "ShareX - " + Resources.TaskManager_task_UploadCompleted_ShareX___Task_completed, action);
-                                                break;
-                                            case PopUpNotificationType.ToastNotification:
-                                                task.KeepImage = true;
-
-                                                NotificationFormConfig toastConfig = new NotificationFormConfig()
-                                                {
-                                                    LeftClickAction = info.TaskSettings.AdvancedSettings.ToastWindowClickAction,
-                                                    RightClickAction = info.TaskSettings.AdvancedSettings.ToastWindowRightClickAction,
-                                                    MiddleClickAction = info.TaskSettings.AdvancedSettings.ToastWindowMiddleClickAction,
-                                                    FilePath = info.FilePath,
-                                                    Image = task.Image,
-                                                    Text = "ShareX - " + Resources.TaskManager_task_UploadCompleted_ShareX___Task_completed + "\r\n" + result,
-                                                    URL = result
-                                                };
-                                                NotificationForm.Show((int)(info.TaskSettings.AdvancedSettings.ToastWindowDuration * 1000),
-                                                    (int)(info.TaskSettings.AdvancedSettings.ToastWindowFadeDuration * 1000),
-                                                    info.TaskSettings.AdvancedSettings.ToastWindowPlacement,
-                                                    info.TaskSettings.AdvancedSettings.ToastWindowSize, toastConfig);
-                                                break;
-                                        }
+                                        NotificationForm.Show(toastConfig);
 
                                         if (info.TaskSettings.AfterUploadJob.HasFlag(AfterUploadTasks.ShowAfterUploadWindow) && info.IsUploadJob)
                                         {
@@ -490,7 +483,7 @@ namespace ShareX
                 {
                     try
                     {
-                        icon = TaskHelpers.GetProgressIcon(progress);
+                        icon = Helpers.GetProgressIcon(progress);
                     }
                     catch (Exception e)
                     {

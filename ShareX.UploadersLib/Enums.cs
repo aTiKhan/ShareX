@@ -143,6 +143,8 @@ namespace ShareX.UploadersLib
         Plik,
         [Description("YouTube")]
         YouTube,
+        [Description("Vault.ooo")]
+        Vault_ooo,
         SharedFolder, // Localized
         Email, // Localized
         CustomFileUploader // Localized
@@ -340,11 +342,12 @@ namespace ShareX.UploadersLib
         LoginFailed
     }
 
-    public enum URLType
+    public enum CustomUploaderURLType
     {
         URL,
         ThumbnailURL,
-        DeletionURL
+        DeletionURL,
+        ErrorMessage
     }
 
     public enum YouTubeVideoPrivacy // Localized
@@ -352,5 +355,15 @@ namespace ShareX.UploadersLib
         Public,
         Unlisted,
         Private
+    }
+
+    public enum BoxShareAccessLevel
+    {
+        [Description("Public - People with the link")]
+        Open,
+        [Description("Company - People in your company")]
+        Company,
+        [Description("Collaborators - Invited people only")]
+        Collaborators
     }
 }

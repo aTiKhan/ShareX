@@ -178,7 +178,7 @@ namespace ShareX.MediaLib
                     break;
             }
 
-            Helpers.CreateDirectoryFromDirectoryPath(directory);
+            Helpers.CreateDirectory(directory);
 
             return directory;
         }
@@ -197,8 +197,7 @@ namespace ShareX.MediaLib
                 mediaSeekTimes.Add(GetTimeSlice(Options.ThumbnailCount + 2) * i);
             }
 
-            Random random = new Random();
-            return (int)((random.NextDouble() * (mediaSeekTimes[start + 1] - mediaSeekTimes[start])) + mediaSeekTimes[start]);
+            return (int)((RandomFast.NextDouble() * (mediaSeekTimes[start + 1] - mediaSeekTimes[start])) + mediaSeekTimes[start]);
         }
 
         private Image CombineScreenshots(List<VideoThumbnailInfo> thumbnails)

@@ -39,6 +39,7 @@ namespace ShareX.HistoryLib
     {
         public string HistoryPath { get; private set; }
         public HistorySettings Settings { get; private set; }
+        public bool SearchInTags { get; set; } = true;
 
         private HistoryManager history;
         private HistoryItemManager him;
@@ -78,6 +79,8 @@ namespace ShareX.HistoryLib
             {
                 scMain.SplitterDistance = Settings.SplitterDistance;
             }
+
+            nudMaxItemCount.SetValue(Settings.MaxItemCount);
 
             ShareXResources.ApplyTheme(this);
 
@@ -157,22 +160,23 @@ namespace ShareX.HistoryLib
                 history = new HistoryManagerJSON(HistoryPath);
             }
 
-            IEnumerable<HistoryItem> tempHistoryItems = history.GetHistoryItems();
-            tempHistoryItems = tempHistoryItems.Reverse();
-
-            if (Settings.MaxItemCount > 0)
-            {
-                tempHistoryItems = tempHistoryItems.Take(Settings.MaxItemCount);
-            }
-
-            return tempHistoryItems.ToArray();
+            List<HistoryItem> historyItems = history.GetHistoryItems();
+            historyItems.Reverse();
+            return historyItems.ToArray();
         }
 
         private void ApplyFiltersAndAdd()
         {
-            if (allHistoryItems.Length > 0)
+            if (allHistoryItems != null && allHistoryItems.Length > 0)
             {
-                AddHistoryItems(ApplyFilters(allHistoryItems));
+                HistoryItem[] historyItems = ApplyFilters(allHistoryItems);
+
+                if (Settings.MaxItemCount > 0 && historyItems.Length > Settings.MaxItemCount)
+                {
+                    historyItems = historyItems.Take(Settings.MaxItemCount).ToArray();
+                }
+
+                AddHistoryItems(historyItems);
             }
         }
 
@@ -210,8 +214,9 @@ namespace ShareX.HistoryLib
             if (!string.IsNullOrEmpty(filenameFilter))
             {
                 string pattern = Regex.Escape(filenameFilter).Replace("\\?", ".").Replace("\\*", ".*");
-                Regex regex = new Regex(pattern, RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
-                result = result.Where(x => x.FileName != null && regex.IsMatch(x.FileName));
+                Regex regex = new Regex(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+                result = result.Where(x => (x.FileName != null && regex.IsMatch(x.FileName)) ||
+                    (SearchInTags && x.Tags != null && x.Tags.Any(tag => regex.IsMatch(tag.Value))));
             }
 
             string urlFilter = txtURLFilter.Text;
@@ -390,6 +395,28 @@ namespace ShareX.HistoryLib
             Settings.SplitterDistance = scMain.SplitterDistance;
         }
 
+        private void txtFilenameFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                ApplyFiltersAndAdd();
+                txtFilenameFilter.Focus();
+            }
+        }
+
+        private void txtURLFilter_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                e.Handled = true;
+                e.SuppressKeyPress = true;
+                ApplyFiltersAndAdd();
+                txtURLFilter.Focus();
+            }
+        }
+
         private void btnApplyFilters_Click(object sender, EventArgs e)
         {
             ApplyFiltersAndAdd();
@@ -419,6 +446,11 @@ namespace ShareX.HistoryLib
                 Cursor = Cursors.Default;
                 showingStats = true;
             }
+        }
+
+        private void nudMaxItemCount_ValueChanged(object sender, EventArgs e)
+        {
+            Settings.MaxItemCount = (int)nudMaxItemCount.Value;
         }
 
         private void lvHistory_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)

@@ -135,7 +135,7 @@
             // 
             this.AcceptButton = this.btnOK;
             resources.ApplyResources(this, "$this");
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Window;
             this.CancelButton = this.btnCancel;
             this.Controls.Add(this.cbDeleteInputFile);
@@ -154,6 +154,7 @@
             this.Controls.Add(this.lblPath);
             this.Controls.Add(this.lblName);
             this.Name = "ActionsForm";
+            this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.ResumeLayout(false);
             this.PerformLayout();
 

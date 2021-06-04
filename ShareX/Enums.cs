@@ -59,12 +59,16 @@ namespace ShareX
         Indonesian,
         [Description("Italiano (Italian)")]
         Italian,
+        [Description("日本語 (Japanese)")]
+        Japanese,
         [Description("한국어 (Korean)")]
         Korean,
         [Description("Español mexicano (Mexican Spanish)")]
         MexicanSpanish,
         [Description("فارسی (Persian)")]
         Persian,
+        [Description("Português (Portuguese)")]
+        Portuguese,
         [Description("Português-Brasil (Portuguese-Brazil)")]
         PortugueseBrazil,
         [Description("Русский (Russian)")]
@@ -208,6 +212,7 @@ namespace ShareX
         HashCheck,
         DNSChanger,
         QRCode,
+        QRCodeDecodeFromScreen,
         Ruler,
         IndexFolder,
         ImageCombiner,
@@ -215,6 +220,8 @@ namespace ShareX
         ImageThumbnailer,
         VideoConverter,
         VideoThumbnailer,
+        InspectWindow,
+        ClipboardViewer,
         TweetMessage,
         MonitorTest,
         // Other
@@ -234,24 +241,27 @@ namespace ShareX
         ToastNotification
     }
 
-    [DefaultValue(OpenUrl)]
     public enum ToastClickAction
     {
         [Description("Close notification")]
         CloseNotification,
         [Description("Annotate image")]
         AnnotateImage,
-        [Description("Copy image to clipboard")]
+        [Description("Copy image")]
         CopyImageToClipboard,
-        [Description("Copy URL")]
+        [Description("Copy file")]
+        CopyFile,
+        [Description("Copy file path")]
+        CopyFilePath,
+        [Description("Copy link")]
         CopyUrl,
         [Description("Open file")]
         OpenFile,
         [Description("Open folder")]
         OpenFolder,
-        [Description("Open URL")]
+        [Description("Open link")]
         OpenUrl,
-        [Description("Upload")]
+        [Description("Upload file")]
         Upload
     }
 
@@ -276,11 +286,6 @@ namespace ShareX
     public enum ThumbnailTitleLocation
     {
         Top, Bottom
-    }
-
-    public enum ScreenRecordState
-    {
-        Waiting, BeforeStart, AfterStart, AfterRecordingStart, Encoding
     }
 
     public enum RegionCaptureType

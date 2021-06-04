@@ -386,6 +386,13 @@ namespace ShareX.UploadersLib
 
             #region Google Drive
 
+            cbGoogleDriveSharedDrive.Items.Clear();
+            cbGoogleDriveSharedDrive.Items.Add(GoogleDrive.MyDrive);
+            if (Config.GoogleDriveSelectedDrive?.id != GoogleDrive.MyDrive.id)
+            {
+                cbGoogleDriveSharedDrive.Items.Add(Config.GoogleDriveSelectedDrive);
+            }
+
             if (OAuth2Info.CheckOAuth(Config.GoogleDriveOAuth2Info))
             {
                 oauth2GoogleDrive.Status = OAuthLoginStatus.LoginSuccessful;
@@ -397,6 +404,7 @@ namespace ShareX.UploadersLib
             cbGoogleDriveUseFolder.Checked = Config.GoogleDriveUseFolder;
             txtGoogleDriveFolderID.Enabled = Config.GoogleDriveUseFolder;
             txtGoogleDriveFolderID.Text = Config.GoogleDriveFolderID;
+            GoogleDriveSelectConfigDrive();
 
             #endregion Google Drive
 
@@ -415,6 +423,11 @@ namespace ShareX.UploadersLib
             }
 
             cbBoxShare.Checked = Config.BoxShare;
+            cbBoxShareAccessLevel.Items.Clear();
+            cbBoxShareAccessLevel.Items.AddRange(Helpers.GetEnumDescriptions<BoxShareAccessLevel>());
+            cbBoxShareAccessLevel.SelectedIndex = (int)Config.BoxShareAccessLevel;
+            cbBoxShareAccessLevel.Enabled = Config.BoxShare;
+            lblBoxShareAccessLevel.Enabled = Config.BoxShare;
             lblBoxFolderID.Text = Resources.UploadersConfigForm_LoadSettings_Selected_folder_ + " " + Config.BoxSelectedFolder.name;
 
             #endregion Box
@@ -639,6 +652,8 @@ namespace ShareX.UploadersLib
             txtSeafileLibraryPassword.ReadOnly = Config.SeafileIsLibraryEncrypted;
             btnSeafileLibraryPasswordValidate.Enabled = !Config.SeafileIsLibraryEncrypted;
             cbSeafileCreateShareableURL.Checked = Config.SeafileCreateShareableURL;
+            cbSeafileCreateShareableURLRaw.Checked = Config.SeafileCreateShareableURLRaw;
+            cbSeafileCreateShareableURLRaw.Enabled = cbSeafileCreateShareableURL.Checked;
             cbSeafileIgnoreInvalidCert.Checked = Config.SeafileIgnoreInvalidCert;
             nudSeafileExpireDays.SetValue(Config.SeafileShareDaysToExpire);
             txtSeafileSharePassword.Text = Config.SeafileSharePassword;
@@ -721,6 +736,7 @@ namespace ShareX.UploadersLib
 
             cbGfycatIsPublic.Checked = Config.GfycatIsPublic;
             cbGfycatKeepAudio.Checked = Config.GfycatKeepAudio;
+            txtGfycatTitle.Text = Config.GfycatTitle;
 
             #endregion Gfycat
 
@@ -809,9 +825,17 @@ namespace ShareX.UploadersLib
             txtKuttHost.Text = Config.KuttSettings.Host;
             txtKuttAPIKey.Text = Config.KuttSettings.APIKey;
             txtKuttPassword.Text = Config.KuttSettings.Password;
+            txtKuttDomain.Text = Config.KuttSettings.Domain;
             cbKuttReuse.Checked = Config.KuttSettings.Reuse;
 
             #endregion Kutt
+
+            #region Zero Width Shortener
+
+            txtZWSURL.Text = Config.ZeroWidthShortenerURL;
+            txtZWSToken.Text = Config.ZeroWidthShortenerToken;
+
+            #endregion
         }
 
         private void LoadOtherUploaderSettings()
@@ -1752,6 +1776,7 @@ namespace ShareX.UploadersLib
         private void btnGoogleDriveRefreshFolders_Click(object sender, EventArgs e)
         {
             GoogleDriveRefreshFolders();
+            GoogleDriveRefreshDrives();
         }
 
         private void lvGoogleDriveFoldersList_SelectedIndexChanged(object sender, EventArgs e)
@@ -1765,6 +1790,12 @@ namespace ShareX.UploadersLib
                     txtGoogleDriveFolderID.Text = folder.id;
                 }
             }
+        }
+
+        private void cbGoogleDriveSharedDrive_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            GoogleDriveSharedDrive selectedDrive = cbGoogleDriveSharedDrive.SelectedItem as GoogleDriveSharedDrive;
+            Config.GoogleDriveSelectedDrive = selectedDrive;
         }
 
         #endregion Google Drive
@@ -1855,6 +1886,13 @@ namespace ShareX.UploadersLib
         private void cbBoxShare_CheckedChanged(object sender, EventArgs e)
         {
             Config.BoxShare = cbBoxShare.Checked;
+            cbBoxShareAccessLevel.Enabled = Config.BoxShare;
+            lblBoxShareAccessLevel.Enabled = Config.BoxShare;
+        }
+
+        private void cbBoxShareAccessLevel_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            Config.BoxShareAccessLevel = (BoxShareAccessLevel)cbBoxShareAccessLevel.SelectedIndex;
         }
 
         private void btnBoxRefreshFolders_Click(object sender, EventArgs e)
@@ -2059,7 +2097,8 @@ namespace ShareX.UploadersLib
             {
                 cbMegaFolder.Items.Clear();
 
-                Mega mega = new Mega(Config.MegaAuthInfos);
+                Mega mega = new Mega(Config.MegaAuthInfos?.GetMegaApiClientAuthInfos());
+
                 if (!tryLogin || mega.TryLogin())
                 {
                     lblMegaStatus.Text = Resources.UploadersConfigForm_MegaConfigureTab_Configured;
@@ -2094,7 +2133,15 @@ namespace ShareX.UploadersLib
                 return;
             }
 
-            Config.MegaAuthInfos = new MegaApiClient().GenerateAuthInfos(txtMegaEmail.Text, txtMegaPassword.Text);
+            MegaApiClient.AuthInfos megaAuthInfos = new MegaApiClient().GenerateAuthInfos(txtMegaEmail.Text, txtMegaPassword.Text);
+            if (megaAuthInfos != null)
+            {
+                Config.MegaAuthInfos = new MegaAuthInfos(megaAuthInfos);
+            }
+            else
+            {
+                Config.MegaAuthInfos = null;
+            }
 
             MegaConfigureTab(true);
         }
@@ -2440,6 +2487,11 @@ namespace ShareX.UploadersLib
             Config.TeknikOAuth2Info = null;
         }
 
+        private void oauthTeknik_RefreshButtonClicked()
+        {
+            OAuth2Refresh(new TeknikUploader(Config.TeknikOAuth2Info, Config.TeknikAuthUrl), oauthTeknik);
+        }
+
         private void tbTeknikAuthUrl_TextChanged(object sender, EventArgs e)
         {
             Config.TeknikAuthUrl = tbTeknikAuthUrl.Text;
@@ -2596,6 +2648,12 @@ namespace ShareX.UploadersLib
         private void cbSeafileCreateShareableURL_CheckedChanged(object sender, EventArgs e)
         {
             Config.SeafileCreateShareableURL = cbSeafileCreateShareableURL.Checked;
+            cbSeafileCreateShareableURLRaw.Enabled = cbSeafileCreateShareableURL.Checked;
+        }
+
+        private void cbSeafileCreateShareableURLRaw_CheckedChanged(object sender, EventArgs e)
+        {
+            Config.SeafileCreateShareableURLRaw = cbSeafileCreateShareableURLRaw.Checked;
         }
 
         private void cbSeafileIgnoreInvalidCert_CheckedChanged(object sender, EventArgs e)
@@ -3008,6 +3066,11 @@ namespace ShareX.UploadersLib
             Config.GfycatKeepAudio = cbGfycatKeepAudio.Checked;
         }
 
+        private void txtGfycatTitle_TextChanged(object sender, EventArgs e)
+        {
+            Config.GfycatTitle = txtGfycatTitle.Text;
+        }
+
         #endregion Gfycat
 
         #region YouTube
@@ -3245,12 +3308,31 @@ namespace ShareX.UploadersLib
             Config.KuttSettings.Password = txtKuttPassword.Text;
         }
 
+        private void txtKuttDomain_TextChanged(object sender, EventArgs e)
+        {
+            Config.KuttSettings.Domain = txtKuttDomain.Text;
+        }
+
         private void cbKuttReuse_CheckedChanged(object sender, EventArgs e)
         {
             Config.KuttSettings.Reuse = cbKuttReuse.Checked;
         }
 
         #endregion Kutt
+
+        #region Zero Width Shortener
+
+        private void txtZWSURL_TextChanged(object sender, EventArgs e)
+        {
+            Config.ZeroWidthShortenerURL = txtZWSURL.Text;
+        }
+
+        private void txtZWSToken_TextChanged(object sender, EventArgs e)
+        {
+            Config.ZeroWidthShortenerToken = txtZWSToken.Text;
+        }
+
+        #endregion
 
         #endregion URL shorteners
 

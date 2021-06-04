@@ -44,6 +44,8 @@ namespace ShareX
             InitializeComponent();
             ShareXResources.ApplyTheme(this);
 
+            btnHotkeysDisabled.Visible = Program.Settings.DisableHotkeys;
+
             PrepareHotkeys(hotkeyManager);
         }
 
@@ -111,10 +113,21 @@ namespace ShareX
             }
         }
 
+        private void RegisterFailedHotkeys()
+        {
+            foreach (HotkeySettings hotkeySettings in manager.Hotkeys.Where(x => x.HotkeyInfo.Status == HotkeyStatus.Failed))
+            {
+                manager.RegisterHotkey(hotkeySettings);
+            }
+
+            UpdateHotkeyStatus();
+        }
+
         private void control_HotkeyChanged(object sender, EventArgs e)
         {
             HotkeySelectionControl control = (HotkeySelectionControl)sender;
             manager.RegisterHotkey(control.Setting);
+            RegisterFailedHotkeys();
         }
 
         private HotkeySelectionControl AddHotkeySelectionControl(HotkeySettings hotkeySetting)
@@ -265,6 +278,12 @@ namespace ShareX
                 Selected = null;
                 UpdateButtons();
             }
+        }
+
+        private void btnHotkeysDisabled_Click(object sender, EventArgs e)
+        {
+            TaskHelpers.ToggleHotkeys(false);
+            btnHotkeysDisabled.Visible = false;
         }
     }
 }
