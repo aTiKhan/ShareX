@@ -130,7 +130,7 @@
     <value>Вивантажувач тексту:</value>
   </data>
   <data name="tsmiCustomUploaderGuide.Text" xml:space="preserve">
-    <value>Довідник з вивантажувачів...</value>
+    <value>Довідник з власних вивантажувачів...</value>
   </data>
   <data name="tsmiExportAll.Text" xml:space="preserve">
     <value>Експортувати все...</value>
@@ -227,5 +227,17 @@
   </data>
   <data name="$this.Text" xml:space="preserve">
     <value>ShareX — Налаштування вивантажувачів</value>
+  </data>
+  <data name="btnTestURLSyntax.Text" xml:space="preserve">
+    <value>Тест...</value>
+  </data>
+  <data name="lblUploaders.Text" xml:space="preserve">
+    <value>Вивантажувачі:</value>
+  </data>
+  <data name="lblResultErrorMessage.Text" xml:space="preserve">
+    <value>Повідомлення про помилку:</value>
+  </data>
+  <data name="tsmiClearUploaders.Text" xml:space="preserve">
+    <value>Очистити вивантажувачі...</value>
   </data>
 </root>

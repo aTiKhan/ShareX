@@ -2,7 +2,7 @@
 
 /*
     ShareX - A program that allows you to take screenshots and share any file type
-    Copyright (c) 2007-2023 ShareX Team
+    Copyright (c) 2007-2026 ShareX Team
 
     This program is free software; you can redistribute it and/or
     modify it under the terms of the GNU General Public License
@@ -25,6 +25,7 @@
 
 using ShareX.HelpersLib;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace ShareX.ScreenCaptureLib
@@ -57,16 +58,18 @@ namespace ShareX.ScreenCaptureLib
                 {
                     return new RectangleF(Rectangle.X, Manager.Form.CanvasRectangle.Y, Rectangle.Width, Manager.Form.CanvasRectangle.Height);
                 }
+
                 if (IsVerticalTrim)
                 {
                     return new RectangleF(Manager.Form.CanvasRectangle.X, Rectangle.Y, Manager.Form.CanvasRectangle.Width, Rectangle.Height);
                 }
+
                 return RectangleF.Empty;
             }
         }
 
         private ImageEditorButton confirmButton, cancelButton;
-        private Size buttonSize = new Size(80, 40);
+        private Size buttonSize = new Size(50, 40);
         private int buttonOffset = 15;
 
         public override void ShowNodes()
@@ -135,7 +138,7 @@ namespace ShareX.ScreenCaptureLib
         public override void OnDraw(Graphics g)
         {
             using (Image selectionHighlightPattern = ImageHelpers.CreateCheckerPattern(1, 1, Color.FromArgb(128, Color.LightGray), Color.FromArgb(128, Color.Gray)))
-            using (Brush selectionHighlightBrush = new TextureBrush(selectionHighlightPattern, System.Drawing.Drawing2D.WrapMode.Tile))
+            using (Brush selectionHighlightBrush = new TextureBrush(selectionHighlightPattern, WrapMode.Tile))
             {
                 g.FillRectangle(selectionHighlightBrush, CutOutRectangle);
             }
@@ -146,7 +149,8 @@ namespace ShareX.ScreenCaptureLib
             confirmButton = new ImageEditorButton()
             {
                 Text = "\u2714",
-                ButtonColor = Color.ForestGreen,
+                ButtonColor = ShareXResources.Theme.LightBackgroundColor,
+                IconColor = Color.ForestGreen,
                 Rectangle = new Rectangle(new Point(), buttonSize),
                 Visible = true
             };
@@ -158,7 +162,8 @@ namespace ShareX.ScreenCaptureLib
             cancelButton = new ImageEditorButton()
             {
                 Text = "\u2716",
-                ButtonColor = Color.FromArgb(227, 45, 45),
+                ButtonColor = ShareXResources.Theme.LightBackgroundColor,
+                IconColor = Color.FromArgb(227, 45, 45),
                 Rectangle = new Rectangle(new Point(), buttonSize),
                 Visible = true
             };
